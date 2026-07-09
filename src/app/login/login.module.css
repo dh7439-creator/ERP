@@ -3,8 +3,35 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #F3F4F6; /* Slightly off-white background outside the box to make the white box pop */
   padding: 20px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1; /* Add z-index to create stacking context so pseudo-elements aren't hidden behind body */
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background-image: url('/bg.jpg'); /* The user's uploaded background image */
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+.container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3); /* Slight white overlay to keep it bright */
+  z-index: -1;
 }
 
 .loginBox {
@@ -28,13 +55,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px; /* 살짝 붙여줌 */
   margin-bottom: 8px;
 }
 
 .logoImage {
-  width: 40px;
-  height: 40px;
+  width: 42px; /* 40px -> 42px */
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,14 +74,14 @@
 }
 
 .logoText {
-  font-size: 32px;
+  font-size: 34px; /* 32px -> 34px (+2pt) */
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
 }
 
 .title {
-  font-size: 20px;
+  font-size: 22px; /* 20px -> 22px (+2pt) */
   font-weight: 600;
   color: #4B5563;
   margin-bottom: 40px;
@@ -71,12 +98,47 @@
   margin-bottom: 20px;
 }
 
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper .input-field {
+  padding-right: 48px; /* space for the icon */
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.passwordToggle:hover {
+  color: #4B5563;
+}
+
 .saveIdContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
   margin-top: 16px;
   margin-bottom: 32px;
+}
+
+.checkboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .checkbox {
@@ -90,6 +152,18 @@
   font-size: 14px;
   color: #6B7280;
   cursor: pointer;
+}
+
+.forgotPasswordLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary);
+  transition: color 0.2s;
+}
+
+.forgotPasswordLink:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
 }
 
 .signupContainer {
