@@ -1,0 +1,242 @@
+.adminLayout {
+  display: flex;
+  height: 100vh;
+  background-color: #F9FAFB;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #111827;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: 24px;
+  border-bottom: 1px solid #1F2937;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #10B981;
+  margin-bottom: 4px;
+}
+
+.badge {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10B981;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+}
+
+.navItem {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  text-align: left;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navItem:hover {
+  background-color: #1F2937;
+  color: #FFFFFF;
+}
+
+.navItem.active {
+  background-color: #1F2937;
+  color: #10B981;
+  border-right: 3px solid #10B981;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 70px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.userProfile {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.mainArea {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.btnSmall {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnSmall:hover {
+  background-color: var(--primary-hover);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.table th {
+  background-color: #F9FAFB;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+}
+
+.table td {
+  font-size: 14px;
+  color: #111827;
+}
+
+.roleBadge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.roleBadge[data-role="통합관리자"] {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.roleBadge[data-role="본사 담당자"] {
+  background-color: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.roleBadge[data-role="현장 담당자"] {
+  background-color: #D1FAE5;
+  color: #047857;
+}
+
+.btnText, .btnTextDanger {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.btnText {
+  color: #3B82F6;
+}
+
+.btnTextDanger {
+  color: #EF4444;
+}
+
+.siteList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.siteBadge {
+  background-color: #F3F4F6;
+  color: #4B5563;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.emptyText {
+  color: #9CA3AF;
+  font-style: italic;
+  font-size: 13px;
+}
+
+.roleInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.roleInfoCard {
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.roleInfoCard h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.roleInfoCard p {
+  font-size: 14px;
+  color: #4B5563;
+  line-height: 1.5;
+}

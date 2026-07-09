@@ -1,0 +1,157 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #F3F4F6;
+  padding: 20px;
+}
+
+.signupBox {
+  background-color: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: var(--box-shadow);
+  width: 100%;
+  max-width: 480px;
+  padding: 40px;
+  transition: box-shadow 0.3s ease;
+}
+
+.signupBox:hover {
+  box-shadow: var(--box-shadow-hover);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputGroup {
+  margin-bottom: 20px;
+}
+
+.roleOptions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.roleLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 12px 16px;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  flex: 1;
+  transition: all 0.2s ease;
+  background-color: var(--input-bg);
+}
+
+.roleLabel:hover {
+  background-color: #FFFFFF;
+  border-color: #9CA3AF;
+}
+
+.roleLabel input[type="radio"] {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.roleLabel span {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.siteOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius);
+  padding: 12px;
+  background-color: var(--input-bg);
+}
+
+.siteLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 6px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.siteLabel:hover {
+  background-color: rgba(0, 166, 81, 0.05);
+}
+
+.siteLabel input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+
+.siteLabel span {
+  font-size: 14px;
+  color: var(--foreground);
+}
+
+.emptySites {
+  font-size: 13px;
+  color: #9CA3AF;
+  font-style: italic;
+  padding: 8px 4px;
+}
+
+.actions {
+  margin-top: 12px;
+  margin-bottom: 24px;
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.loginText {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.loginLink {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
