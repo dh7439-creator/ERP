@@ -13,52 +13,33 @@ export default function AdminPage() {
   }, []);
 
   return (
-    <div className={styles.adminLayout}>
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
-          <h2 className={styles.brand}>BOLIM ERP</h2>
-          <span className={styles.badge}>통합관리자</span>
-        </div>
-        <nav className={styles.nav}>
-          <button 
-            className={`${styles.navItem} ${activeTab === 'accounts' ? styles.active : ''}`}
-            onClick={() => setActiveTab('accounts')}
-          >
-            ① 계정관리
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeTab === 'sites' ? styles.active : ''}`}
-            onClick={() => setActiveTab('sites')}
-          >
-            ② 담당 배정 현장 관리
-          </button>
-          <button 
-            className={`${styles.navItem} ${activeTab === 'roles' ? styles.active : ''}`}
-            onClick={() => setActiveTab('roles')}
-          >
-            ③ 권한 관리
-          </button>
-        </nav>
-      </aside>
+    <div>
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', borderBottom: '1px solid #E5E7EB', paddingBottom: '16px' }}>
+        <button 
+          style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: activeTab === 'accounts' ? '#10B981' : '#F3F4F6', color: activeTab === 'accounts' ? '#FFF' : '#374151', cursor: 'pointer', fontWeight: 600 }}
+          onClick={() => setActiveTab('accounts')}
+        >
+          ① 계정관리
+        </button>
+        <button 
+          style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: activeTab === 'sites' ? '#10B981' : '#F3F4F6', color: activeTab === 'sites' ? '#FFF' : '#374151', cursor: 'pointer', fontWeight: 600 }}
+          onClick={() => setActiveTab('sites')}
+        >
+          ② 담당 배정 현장 관리
+        </button>
+        <button 
+          style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: activeTab === 'roles' ? '#10B981' : '#F3F4F6', color: activeTab === 'roles' ? '#FFF' : '#374151', cursor: 'pointer', fontWeight: 600 }}
+          onClick={() => setActiveTab('roles')}
+        >
+          ③ 권한 관리
+        </button>
+      </div>
 
-      <main className={styles.content}>
-        <header className={styles.topbar}>
-          <h1 className={styles.pageTitle}>
-            {activeTab === 'accounts' && '계정 관리'}
-            {activeTab === 'sites' && '담당 배정 현장 관리'}
-            {activeTab === 'roles' && '권한 관리'}
-          </h1>
-          <div className={styles.userProfile}>
-            임다혜 (통합관리자)
-          </div>
-        </header>
-
-        <div className={styles.mainArea}>
-          {activeTab === 'accounts' && <AccountManagement users={users} />}
-          {activeTab === 'sites' && <SiteManagement users={users} />}
-          {activeTab === 'roles' && <RoleManagement users={users} />}
-        </div>
-      </main>
+      <div>
+        {activeTab === 'accounts' && <AccountManagement users={users} />}
+        {activeTab === 'sites' && <SiteManagement users={users} />}
+        {activeTab === 'roles' && <RoleManagement users={users} />}
+      </div>
     </div>
   );
 }

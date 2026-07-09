@@ -1,0 +1,136 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  background-color: #F9FAFB;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: #111827;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: 24px;
+  border-bottom: 1px solid #1F2937;
+}
+
+.brand {
+  font-size: 20px;
+  font-weight: 700;
+  color: #10B981;
+  margin-bottom: 8px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge[data-role="통합관리자"] {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10B981;
+}
+
+.badge[data-role="본사 담당자"] {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #60A5FA;
+}
+
+.badge[data-role="현장 담당자"] {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  flex: 1;
+}
+
+.navItem {
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  text-align: left;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.navItem:hover {
+  background-color: #1F2937;
+  color: #FFFFFF;
+}
+
+.navItem.active {
+  background-color: #1F2937;
+  color: #10B981;
+  border-right: 3px solid #10B981;
+}
+
+.sidebarFooter {
+  padding: 24px;
+  border-top: 1px solid #1F2937;
+}
+
+.logoutBtn {
+  width: 100%;
+  background-color: transparent;
+  color: #9CA3AF;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+  background-color: #374151;
+  color: #FFFFFF;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  height: 70px;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.pageTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.userProfile {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.mainArea {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+}

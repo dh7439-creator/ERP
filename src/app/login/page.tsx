@@ -19,7 +19,7 @@ export default function LoginPage() {
     
     const user = authenticate(email, password);
     if (user) {
-      router.push('/admin'); // 현재는 모두 어드민 화면으로 보냄
+      router.push('/summary'); // 모두 집계표 화면으로 기본 이동
     } else {
       setError('이메일 또는 비밀번호가 올바르지 않습니다.');
     }
