@@ -36,6 +36,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         <nav className={styles.nav}>
           <Link 
+            href="/iris" 
+            className={`${styles.navItem} ${pathname === '/iris' ? styles.active : ''}`}
+          >
+            홍채관리
+          </Link>
+          
+          <Link 
             href="/summary" 
             className={`${styles.navItem} ${pathname === '/summary' ? styles.active : ''}`}
           >
@@ -66,6 +73,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className={styles.content}>
         <header className={styles.topbar}>
           <h1 className={styles.pageTitle}>
+            {pathname === '/iris' && '홍채관리'}
             {pathname === '/summary' && '출력공수 변경 집계표'}
             {pathname.startsWith('/approval') && '전자결재'}
             {pathname === '/admin' && '관리자 설정'}
