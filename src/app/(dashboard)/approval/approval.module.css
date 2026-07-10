@@ -143,7 +143,7 @@
 }
 
 .docMainTitle {
-  font-size: 28px;
+  font-size: 26px !important;
   font-weight: 800;
   letter-spacing: 12px;
   text-align: center;
@@ -204,4 +204,37 @@
   margin-top: 40px;
   padding-top: 24px;
   border-top: 1px solid #E5E7EB;
+}
+
+@media print {
+  .container {
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  .bottomActions,
+  .gridActions {
+    display: none !important;
+  }
+  
+  .gridInput,
+  .approvalHeaderTable input,
+  .approvalHeaderTable select {
+    border: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    background: transparent !important;
+  }
+  
+  body {
+    background-color: white !important;
+  }
+
+  /* Force background colors to print */
+  .bgGray {
+    background-color: #F3F4F6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }

@@ -17,6 +17,7 @@ export interface ApprovalRow {
 
 export interface ApprovalDocument {
   id: string;
+  docNumber?: string;
   siteName: string;
   title: string;
   drafter: string; // User ID or Name

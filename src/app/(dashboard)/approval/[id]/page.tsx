@@ -17,6 +17,7 @@ export default function ApprovalDetailPage() {
   
   const [doc, setDoc] = useState<ApprovalDocument>({
     id: isNew ? generateId() : docId,
+    docNumber: '',
     siteName: '',
     title: '',
     drafter: '',
@@ -45,7 +46,7 @@ export default function ApprovalDetailPage() {
     setUser(currentUser);
     
     const allUsers = getUsers();
-    setHqUsers(allUsers.filter(u => u.role === '본사 담당자' || u.role === '통합관리자'));
+    setHqUsers(allUsers.filter(u => u.role === '본사 담당자'));
 
     if (isNew && currentUser) {
       setDoc(prev => ({
@@ -126,27 +127,41 @@ export default function ApprovalDetailPage() {
   const totalB = doc.rows.reduce((acc, r) => acc + (Number(r.changedB) || 0), 0);
   const totalDiff = doc.rows.reduce((acc, r) => acc + (Number(r.diff) || 0), 0);
 
+  // Find users for rank display
+  const hq1User = hqUsers.find(u => u.name === doc.approvalLine.hq1);
+  const hq2User = hqUsers.find(u => u.name === doc.approvalLine.hq2);
+  const hq1Rank = hq1User?.rank || '본사 담당자 1';
+  const hq2Rank = hq2User?.rank || '본사 담당자 2';
+
   return (
     <div className={styles.container}>
       <table className={styles.approvalHeaderTable}>
         <tbody>
           <tr>
             <th className={styles.bgGray} style={{ width: '90px' }}>문서번호</th>
-            <td colSpan={2}>{doc.id}</td>
-            <td colSpan={2} className={styles.docMainTitle}>업 무 연 락</td>
+            <td colSpan={2} style={{ width: '30%' }}>
+              <input 
+                type="text" 
+                value={doc.docNumber || ''} 
+                onChange={e => setDoc({...doc, docNumber: e.target.value})}
+                placeholder="ex) 260706"
+                disabled={!canEditGrid}
+                style={{ width: '100%', border: 'none', outline: 'none', fontSize: '14px', backgroundColor: 'transparent', textAlign: 'center' }}
+              />
+            </td>
+            <td colSpan={2} className={styles.docMainTitle} style={{ width: '30%', textAlign: 'center' }}>업 무 연 락</td>
             <th className={styles.bgGray} style={{ width: '90px' }}>기안일</th>
             <td style={{ width: '120px' }}>{doc.draftDate}</td>
           </tr>
           <tr>
             <th className={styles.bgGray} rowSpan={3}>결<br/><br/>재</th>
-            <td colSpan={2} rowSpan={3} style={{ fontWeight: 600 }}>{doc.siteName}</td>
-            <th className={styles.bgGray}>기안자</th>
-            <th className={styles.bgGray}>본사 담당자 1</th>
-            <th className={styles.bgGray} colSpan={2}>본사 담당자 2</th>
+            <th className={styles.bgGray} colSpan={2} style={{ width: '30%' }}>기안자</th>
+            <th className={styles.bgGray} colSpan={2} style={{ width: '30%' }}>{hq1Rank}</th>
+            <th className={styles.bgGray} colSpan={2} style={{ width: '30%' }}>{hq2Rank}</th>
           </tr>
           <tr>
-            <td>{doc.drafter}</td>
-            <td>
+            <td colSpan={2}>{doc.drafter}</td>
+            <td colSpan={2}>
               {canEditLine && doc.status === '임시저장' ? (
                 <select 
                   value={doc.approvalLine.hq1}
@@ -154,7 +169,7 @@ export default function ApprovalDetailPage() {
                   style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
                 >
                   <option value="">선택</option>
-                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}{u.rank ? ` (${u.rank})` : ''}</option>)}
                 </select>
               ) : (
                 doc.approvalLine.hq1 || '미지정'
@@ -168,7 +183,7 @@ export default function ApprovalDetailPage() {
                   style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
                 >
                   <option value="">선택</option>
-                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}{u.rank ? ` (${u.rank})` : ''}</option>)}
                 </select>
               ) : (
                 doc.approvalLine.hq2 || '미지정'
@@ -176,8 +191,8 @@ export default function ApprovalDetailPage() {
             </td>
           </tr>
           <tr>
-            <td style={{ color: '#10B981', fontSize: '12px' }}>{doc.draftDate}</td>
-            <td style={{ color: doc.approvalLine.hq1Status === 'APPROVED' ? '#10B981' : '#F59E0B', fontSize: '12px' }}>
+            <td colSpan={2} style={{ color: '#10B981', fontSize: '12px' }}>{doc.draftDate}</td>
+            <td colSpan={2} style={{ color: doc.approvalLine.hq1Status === 'APPROVED' ? '#10B981' : '#F59E0B', fontSize: '12px' }}>
               {!isNew ? doc.approvalLine.hq1Status : ''}
             </td>
             <td colSpan={2} style={{ color: doc.approvalLine.hq2Status === 'APPROVED' ? '#10B981' : '#F59E0B', fontSize: '12px' }}>
@@ -189,10 +204,8 @@ export default function ApprovalDetailPage() {
             <td colSpan={6} className={styles.textLeft}></td>
           </tr>
           <tr>
-            <th className={styles.bgGray}>기안자</th>
-            <td colSpan={2}>{doc.drafter}</td>
             <th className={styles.bgGray}>기안현장</th>
-            <td colSpan={3} className={styles.textLeft}>{doc.siteName}</td>
+            <td colSpan={6} className={styles.textLeft} style={{ paddingLeft: '16px' }}>{doc.siteName}</td>
           </tr>
           <tr>
             <th className={styles.bgGray}>제 목</th>
@@ -268,6 +281,7 @@ export default function ApprovalDetailPage() {
 
       <div className={styles.bottomActions}>
         <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => router.push('/approval')}>목록으로</button>
+        <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px', backgroundColor: '#F3F4F6', color: '#374151', border: '1px solid #D1D5DB'}} onClick={() => window.print()}>출력</button>
         
         {isNew || (isDrafter && (doc.status === '임시저장' || doc.status === '반송')) ? (
           <>
