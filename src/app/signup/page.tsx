@@ -2,15 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './signup.module.css';
 import { getSites } from '@/lib/auth';
 
 export default function SignupPage() {
+  const router = useRouter();
   const [sites, setSites] = useState<string[]>([]);
 
   useEffect(() => {
     setSites(getSites());
   }, []);
+
+  const handleSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert('회원가입이 성공적으로 완료되었습니다! 로그인 페이지로 이동합니다.');
+    router.push('/login');
+  };
 
   return (
     <div className={styles.container}>
@@ -18,7 +26,7 @@ export default function SignupPage() {
         <h1 className={styles.title}>회원가입</h1>
         <p className={styles.subtitle}>BOLIM 공수 관리 시스템</p>
 
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSignup}>
           <div className={styles.inputGroup}>
             <label className="label" htmlFor="email">이메일 주소</label>
             <input 

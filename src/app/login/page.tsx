@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './login.module.css';
@@ -12,11 +12,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [saveId, setSaveId] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('savedEmail');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setSaveId(true);
+    }
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     
+    if (saveId) {
+      localStorage.setItem('savedEmail', email);
+    } else {
+      localStorage.removeItem('savedEmail');
+    }
+
     const user = authenticate(email, password);
     if (user) {
       router.push('/summary'); // 모두 집계표 화면으로 기본 이동
@@ -88,7 +103,13 @@ export default function LoginPage() {
 
           <div className={styles.saveIdContainer}>
             <div className={styles.checkboxGroup}>
-              <input type="checkbox" id="saveId" className={styles.checkbox} />
+              <input 
+                type="checkbox" 
+                id="saveId" 
+                className={styles.checkbox} 
+                checked={saveId}
+                onChange={(e) => setSaveId(e.target.checked)}
+              />
               <label htmlFor="saveId" className={styles.saveIdLabel}>아이디 저장</label>
             </div>
             <Link href="/forgot-password" className={styles.forgotPasswordLink}>

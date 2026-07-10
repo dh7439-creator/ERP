@@ -25,7 +25,7 @@ export default function AdminPage() {
           style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: activeTab === 'sites' ? '#10B981' : '#F3F4F6', color: activeTab === 'sites' ? '#FFF' : '#374151', cursor: 'pointer', fontWeight: 600 }}
           onClick={() => setActiveTab('sites')}
         >
-          ② 담당 배정 현장 관리
+          ② 현장 관리
         </button>
         <button 
           style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: activeTab === 'roles' ? '#10B981' : '#F3F4F6', color: activeTab === 'roles' ? '#FFF' : '#374151', cursor: 'pointer', fontWeight: 600 }}
@@ -45,10 +45,31 @@ export default function AdminPage() {
 }
 
 function AccountManagement({ users }: { users: User[] }) {
+  const [subTab, setSubTab] = useState<'field' | 'hq'>('field');
+
+  const fieldUsers = users.filter(u => u.role === '현장 담당자');
+  const hqUsers = users.filter(u => u.role === '본사 담당자');
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        <h3 className={styles.cardTitle}>담당자 목록</h3>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <h3 className={styles.cardTitle}>담당자 목록</h3>
+          <div style={{ display: 'flex', border: '1px solid #E5E7EB', borderRadius: '6px', overflow: 'hidden' }}>
+            <button 
+              onClick={() => setSubTab('field')}
+              style={{ padding: '4px 12px', border: 'none', background: subTab === 'field' ? '#E5E7EB' : '#FFF', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
+            >
+              현장 담당자
+            </button>
+            <button 
+              onClick={() => setSubTab('hq')}
+              style={{ padding: '4px 12px', border: 'none', background: subTab === 'hq' ? '#E5E7EB' : '#FFF', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
+            >
+              본사 담당자
+            </button>
+          </div>
+        </div>
         <button className={styles.btnSmall}>+ 새 담당자 등록</button>
       </div>
       <table className={styles.table}>
@@ -62,56 +83,83 @@ function AccountManagement({ users }: { users: User[] }) {
           </tr>
         </thead>
         <tbody>
-          {users.map(u => (
-            <tr key={u.id}>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td><span className={styles.roleBadge} data-role={u.role}>{u.role}</span></td>
-              <td>{u.sites?.length || 0}개</td>
-              <td>
-                <button className={styles.btnText}>수정</button>
-                <button className={styles.btnTextDanger}>삭제</button>
-              </td>
-            </tr>
-          ))}
+          {(subTab === 'field' ? fieldUsers : hqUsers).length === 0 ? (
+            <tr><td colSpan={5} style={{textAlign: 'center', padding: '20px', color: '#9CA3AF'}}>등록된 담당자가 없습니다.</td></tr>
+          ) : (
+            (subTab === 'field' ? fieldUsers : hqUsers).map(u => (
+              <tr key={u.id}>
+                <td>{u.name}</td>
+                <td>{u.email}</td>
+                <td><span className={styles.roleBadge} data-role={u.role}>{u.role}</span></td>
+                <td>{u.sites?.length || 0}개</td>
+                <td>
+                  <button className={styles.btnText}>수정</button>
+                  <button className={styles.btnTextDanger}>삭제</button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
   );
 }
 
+import { getSites, saveSite } from '@/lib/auth';
+
 function SiteManagement({ users }: { users: User[] }) {
+  const [sites, setSites] = useState<string[]>([]);
+  const [newSite, setNewSite] = useState('');
+
+  useEffect(() => {
+    setSites(getSites());
+  }, []);
+
+  const handleAddSite = () => {
+    if (newSite.trim() && !sites.includes(newSite.trim())) {
+      saveSite(newSite.trim());
+      setSites(getSites());
+      setNewSite('');
+    }
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.cardHeader}>
-        <h3 className={styles.cardTitle}>현장 배정 현황</h3>
+        <h3 className={styles.cardTitle}>현장 목록 및 추가</h3>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input 
+            type="text" 
+            value={newSite} 
+            onChange={(e) => setNewSite(e.target.value)} 
+            placeholder="새 현장명 입력" 
+            style={{ padding: '6px 12px', border: '1px solid #D1D5DB', borderRadius: '4px', fontSize: '14px' }}
+          />
+          <button className={styles.btnSmall} onClick={handleAddSite}>+ 현장 추가</button>
+        </div>
       </div>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>담당자 이름</th>
-            <th>이메일</th>
-            <th>담당 현장 목록</th>
+            <th>NO</th>
+            <th>현장명</th>
             <th>관리</th>
           </tr>
         </thead>
         <tbody>
-          {users.map(u => (
-            <tr key={u.id}>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
+          {sites.map((site, idx) => (
+            <tr key={site}>
+              <td>{idx + 1}</td>
+              <td>{site}</td>
               <td>
-                <div className={styles.siteList}>
-                  {u.sites?.length ? u.sites.map(s => (
-                    <span key={s} className={styles.siteBadge}>{s}</span>
-                  )) : <span className={styles.emptyText}>배정된 현장 없음</span>}
-                </div>
-              </td>
-              <td>
-                <button className={styles.btnText}>배정/수정</button>
+                <button className={styles.btnText}>수정</button>
+                <button className={styles.btnTextDanger}>삭제</button>
               </td>
             </tr>
           ))}
+          {sites.length === 0 && (
+            <tr><td colSpan={3} style={{textAlign: 'center', padding: '20px', color: '#9CA3AF'}}>등록된 현장이 없습니다.</td></tr>
+          )}
         </tbody>
       </table>
     </div>
