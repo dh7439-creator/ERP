@@ -240,6 +240,14 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <style>{`
+        @media print {
+          @page {
+            size: ${viewMode === 'main' ? 'landscape' : 'portrait'};
+            margin: 0;
+          }
+        }
+      `}</style>
       <div className={styles.headerRow}>
         <h2 className={styles.title}>
           {viewMode === 'main' ? '홍채관리 (출력 인원)' : '미인식자 대시보드'}
@@ -252,7 +260,14 @@ export default function Home() {
             {viewMode === 'main' ? '미인식자 대시보드' : '메인 표로 돌아가기'}
           </button>
           <button 
-            onClick={() => window.print()}
+            onClick={() => {
+              if (viewMode === 'unrecognized') {
+                setActiveUnrecDate('ALL');
+                setTimeout(() => window.print(), 100);
+              } else {
+                window.print();
+              }
+            }}
             className={styles.btnSecondary}
           >
             출력
@@ -324,11 +339,13 @@ export default function Home() {
           <div>
             {(() => {
               const filteredSites = sites.map((site, originalSiteIdx) => {
-                const filteredUnrec = activeUnrecDate === 'ALL' 
+                let filteredUnrec = activeUnrecDate === 'ALL' 
                   ? site.unrecognized || [] 
                   : (site.unrecognized || []).filter(u => u.date === activeUnrecDate);
                 
                 if (filteredUnrec.length === 0) return null;
+
+                filteredUnrec = [...filteredUnrec].sort((a, b) => a.date.localeCompare(b.date));
 
                 const totalUnrec = filteredUnrec.length;
                 const resolvedCount = filteredUnrec.filter(u => u.isResolved).length;
@@ -348,8 +365,8 @@ export default function Home() {
                         <thead>
                           <tr>
                             <th style={{ width: '100px' }}>발생 일자</th>
-                            <th style={{ width: '120px' }}>이름</th>
-                            <th style={{ width: '100px' }}>확인 상태</th>
+                            <th style={{ width: '250px' }}>이름</th>
+                            <th className={styles.printHide} style={{ width: '100px' }}>확인 상태</th>
                             <th>가공 및 사유 작성</th>
                           </tr>
                         </thead>
@@ -359,8 +376,11 @@ export default function Home() {
                             return (
                               <tr key={filteredIdx} style={{ opacity: unrec.isResolved ? 0.6 : 1 }}>
                                 <td>{unrec.date}</td>
-                                <td style={{ fontWeight: 700 }}>{unrec.name}</td>
-                                <td>
+                                <td style={{ fontWeight: 700 }}>
+                                  {unrec.team && <span style={{ color: '#6B7280', fontSize: '12px', marginRight: '4px', fontWeight: 500 }}>[{unrec.team}]</span>}
+                                  {unrec.name}
+                                </td>
+                                <td className={styles.printHide}>
                                   <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isAdmin ? 'pointer' : 'default' }}>
                                     <input 
                                       type="checkbox" 

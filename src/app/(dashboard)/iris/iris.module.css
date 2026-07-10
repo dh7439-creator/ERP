@@ -347,15 +347,11 @@
 }
 
 @media print {
-  @page {
-    size: landscape;
-    margin: 0;
-  }
   .container {
     padding: 15mm !important;
     background: white !important;
   }
-  .actionGroup, .navButton, .printHide {
+  .actionGroup, .navButton, .printHide, .filterSection {
     display: none !important;
   }
   .table th, .table td {
@@ -371,7 +367,7 @@
   .mismatchTop, .mismatchBottom, .mismatchLeft, .mismatchRight {
     border-color: #000 !important;
   }
-  .siteGroup {
+  .siteGroup, .unrecCard {
     page-break-inside: avoid;
     break-inside: avoid;
   }

@@ -37,6 +37,12 @@ export const parseExcelData = (file) => {
             return k.includes('성명') || k.includes('이름') || k.includes('근로자') || k.includes('근무자') || k.includes('작업자') || k.includes('사용자') || k.includes('직원') || k.includes('노무자');
           });
 
+          // 팀명/소속 확인용
+          const teamKey = Object.keys(row).find(key => {
+            const k = key.replace(/\s+/g, '');
+            return k.includes('팀명') || k.includes('소속') || k.includes('업체');
+          });
+
           // 공수가 비어있거나 정확히 '0'이면 무조건 통계 및 미인식자에서 완전 제외 (가장 먼저 컷)
           // 단, '0.1' 등 소수점이 있는 경우는 통과
           const gongsuValue = gongsuKey && row[gongsuKey] !== undefined ? String(row[gongsuKey]).trim() : '';
@@ -109,9 +115,11 @@ export const parseExcelData = (file) => {
             // 미인식자 처리 (인증회수 1)
             if (isUnrecognized) {
               const workerName = nameKey && row[nameKey] ? String(row[nameKey]).trim() : '이름없음';
+              const teamName = teamKey && row[teamKey] ? String(row[teamKey]).trim() : '';
               currentSite.unrecognized.push({
                 date: dateStr,
-                name: workerName
+                name: workerName,
+                team: teamName
               });
             }
             
