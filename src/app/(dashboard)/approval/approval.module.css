@@ -1,0 +1,241 @@
+.container {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 32px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  color: #111827;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.filterSection {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #F9FAFB;
+  border-radius: 8px;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #E5E7EB;
+  font-size: 14px;
+}
+
+.table th {
+  background-color: #F3F4F6;
+  color: #374151;
+  font-weight: 600;
+}
+
+.clickableRow {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.clickableRow:hover {
+  background-color: #F9FAFB;
+}
+
+.docTitle {
+  font-weight: 600;
+  color: #111827;
+  text-align: left;
+}
+
+.emptyState {
+  padding: 40px !important;
+  color: #9CA3AF;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusBadge[data-status="결재중"] {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3B82F6;
+}
+
+.statusBadge[data-status="결재완료"] {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10B981;
+}
+
+.statusBadge[data-status="수정완료"] {
+  background-color: rgba(139, 92, 246, 0.1);
+  color: #8B5CF6;
+}
+
+.statusBadge[data-status="임시저장"] {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: #6B7280;
+}
+
+.statusBadge[data-status="반송"] {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+/* Detail Form Styles */
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  border-bottom: 2px solid #E5E7EB;
+  padding-bottom: 24px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #4B5563;
+  font-size: 14px;
+}
+
+.infoValue {
+  font-size: 15px;
+  color: #111827;
+}
+
+.titleInput {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.approvalLineBox {
+  display: flex;
+  gap: 16px;
+}
+
+.lineItem {
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  min-width: 100px;
+}
+
+.lineRole {
+  font-size: 12px;
+  color: #6B7280;
+  margin-bottom: 4px;
+}
+
+.lineName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.lineStatus {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lineSelect {
+  margin-top: 4px;
+  font-size: 13px;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #E5E7EB;
+}
+
+.gridSection {
+  margin-bottom: 32px;
+}
+
+.gridActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.btnMini {
+  padding: 4px 12px;
+  font-size: 13px;
+  border: 1px solid #D1D5DB;
+  background-color: #FFFFFF;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btnMini:hover {
+  background-color: #F3F4F6;
+}
+
+.gridInput {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.gridInput:focus {
+  border-color: #10B981;
+  outline: none;
+}
+
+.bottomActions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+}

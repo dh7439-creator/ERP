@@ -42,6 +42,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             출력공수 변경 집계표
           </Link>
           
+          <Link 
+            href="/approval" 
+            className={`${styles.navItem} ${pathname.startsWith('/approval') ? styles.active : ''}`}
+          >
+            전자결재
+          </Link>
+          
           {user.role === '통합관리자' && (
             <Link 
               href="/admin" 
@@ -59,7 +66,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <main className={styles.content}>
         <header className={styles.topbar}>
           <h1 className={styles.pageTitle}>
-            {pathname === '/summary' ? '출력공수 변경 집계표' : '관리자 설정'}
+            {pathname === '/summary' && '출력공수 변경 집계표'}
+            {pathname.startsWith('/approval') && '전자결재'}
+            {pathname === '/admin' && '관리자 설정'}
           </h1>
           <div className={styles.userProfile}>
             {user.name} ({user.role})
