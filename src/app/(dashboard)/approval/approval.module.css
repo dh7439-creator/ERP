@@ -120,77 +120,43 @@
 }
 
 /* Detail Form Styles */
-.formHeader {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  border-bottom: 2px solid #E5E7EB;
-  padding-bottom: 24px;
-}
-
-.infoGrid {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 12px;
-  align-items: center;
-}
-
-.infoLabel {
-  font-weight: 600;
-  color: #4B5563;
-  font-size: 14px;
-}
-
-.infoValue {
-  font-size: 15px;
-  color: #111827;
-}
-
-.titleInput {
+.approvalHeaderTable {
   width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #111827;
+  margin-bottom: 32px;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+}
+
+.approvalHeaderTable th, .approvalHeaderTable td {
+  border: 1px solid #111827;
   padding: 8px 12px;
-  border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.approvalLineBox {
-  display: flex;
-  gap: 16px;
-}
-
-.lineItem {
-  border: 1px solid #D1D5DB;
-  border-radius: 6px;
-  padding: 12px;
   text-align: center;
-  min-width: 100px;
-}
-
-.lineRole {
-  font-size: 12px;
-  color: #6B7280;
-  margin-bottom: 4px;
-}
-
-.lineName {
   font-size: 14px;
-  font-weight: 600;
   color: #111827;
 }
 
-.lineStatus {
-  margin-top: 8px;
-  font-size: 12px;
+.approvalHeaderTable th {
+  background-color: #F3F4F6;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.docMainTitle {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 12px;
+  text-align: center;
+  padding: 16px !important;
+}
+
+.bgGray {
+  background-color: #F3F4F6;
   font-weight: 600;
 }
 
-.lineSelect {
-  margin-top: 4px;
-  font-size: 13px;
-  padding: 4px;
-  border-radius: 4px;
-  border: 1px solid #E5E7EB;
+.textLeft {
+  text-align: left !important;
 }
 
 .gridSection {

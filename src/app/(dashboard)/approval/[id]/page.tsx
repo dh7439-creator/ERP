@@ -128,74 +128,87 @@ export default function ApprovalDetailPage() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.formHeader}>
-        <div className={styles.infoGrid}>
-          <div className={styles.infoLabel}>현장명</div>
-          <div className={styles.infoValue}>{doc.siteName}</div>
-          
-          <div className={styles.infoLabel}>기안자</div>
-          <div className={styles.infoValue}>{doc.drafter}</div>
-          
-          <div className={styles.infoLabel}>기안일</div>
-          <div className={styles.infoValue}>{doc.draftDate}</div>
-          
-          <div className={styles.infoLabel}>제목</div>
-          <div className={styles.infoValue}>
-            <input 
-              type="text" 
-              className={styles.titleInput} 
-              value={doc.title} 
-              onChange={e => setDoc({...doc, title: e.target.value})}
-              placeholder="제목을 입력하세요"
-              disabled={!canEditGrid}
-            />
-          </div>
-        </div>
-
-        <div className={styles.approvalLineBox}>
-          <div className={styles.lineItem}>
-            <div className={styles.lineRole}>기안자</div>
-            <div className={styles.lineName}>{doc.drafter}</div>
-            <div className={styles.lineStatus} style={{color: '#10B981'}}>기안</div>
-          </div>
-          <div className={styles.lineItem}>
-            <div className={styles.lineRole}>본사 담당자 1</div>
-            {canEditLine && doc.status === '임시저장' ? (
-              <select 
-                className={styles.lineSelect}
-                value={doc.approvalLine.hq1}
-                onChange={e => setDoc({...doc, approvalLine: {...doc.approvalLine, hq1: e.target.value}})}
-              >
-                <option value="">선택</option>
-                {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
-            ) : (
-              <div className={styles.lineName}>{doc.approvalLine.hq1 || '미지정'}</div>
-            )}
-            {!isNew && <div className={styles.lineStatus} style={{color: doc.approvalLine.hq1Status === 'APPROVED' ? '#10B981' : '#F59E0B'}}>
-              {doc.approvalLine.hq1Status}
-            </div>}
-          </div>
-          <div className={styles.lineItem}>
-            <div className={styles.lineRole}>본사 담당자 2</div>
-            {canEditLine && doc.status === '임시저장' ? (
-              <select 
-                className={styles.lineSelect}
-                value={doc.approvalLine.hq2}
-                onChange={e => setDoc({...doc, approvalLine: {...doc.approvalLine, hq2: e.target.value}})}
-              >
-                <option value="">선택</option>
-                {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
-              </select>
-            ) : (
-              <div className={styles.lineName}>{doc.approvalLine.hq2 || '미지정'}</div>
-            )}
-            {!isNew && <div className={styles.lineStatus} style={{color: doc.approvalLine.hq2Status === 'APPROVED' ? '#10B981' : '#F59E0B'}}>
-              {doc.approvalLine.hq2Status}
-            </div>}
-          </div>
-        </div>
-      </div>
+      <table className={styles.approvalHeaderTable}>
+        <tbody>
+          <tr>
+            <th className={styles.bgGray} style={{ width: '90px' }}>문서번호</th>
+            <td colSpan={2}>{doc.id}</td>
+            <td colSpan={2} className={styles.docMainTitle}>업 무 연 락</td>
+            <th className={styles.bgGray} style={{ width: '90px' }}>기안일</th>
+            <td style={{ width: '120px' }}>{doc.draftDate}</td>
+          </tr>
+          <tr>
+            <th className={styles.bgGray} rowSpan={3}>결<br/><br/>재</th>
+            <td colSpan={2} rowSpan={3} style={{ fontWeight: 600 }}>{doc.siteName}</td>
+            <th className={styles.bgGray}>기안자</th>
+            <th className={styles.bgGray}>본사 담당자 1</th>
+            <th className={styles.bgGray} colSpan={2}>본사 담당자 2</th>
+          </tr>
+          <tr>
+            <td>{doc.drafter}</td>
+            <td>
+              {canEditLine && doc.status === '임시저장' ? (
+                <select 
+                  value={doc.approvalLine.hq1}
+                  onChange={e => setDoc({...doc, approvalLine: {...doc.approvalLine, hq1: e.target.value}})}
+                  style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
+                >
+                  <option value="">선택</option>
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+                </select>
+              ) : (
+                doc.approvalLine.hq1 || '미지정'
+              )}
+            </td>
+            <td colSpan={2}>
+              {canEditLine && doc.status === '임시저장' ? (
+                <select 
+                  value={doc.approvalLine.hq2}
+                  onChange={e => setDoc({...doc, approvalLine: {...doc.approvalLine, hq2: e.target.value}})}
+                  style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
+                >
+                  <option value="">선택</option>
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
+                </select>
+              ) : (
+                doc.approvalLine.hq2 || '미지정'
+              )}
+            </td>
+          </tr>
+          <tr>
+            <td style={{ color: '#10B981', fontSize: '12px' }}>{doc.draftDate}</td>
+            <td style={{ color: doc.approvalLine.hq1Status === 'APPROVED' ? '#10B981' : '#F59E0B', fontSize: '12px' }}>
+              {!isNew ? doc.approvalLine.hq1Status : ''}
+            </td>
+            <td colSpan={2} style={{ color: doc.approvalLine.hq2Status === 'APPROVED' ? '#10B981' : '#F59E0B', fontSize: '12px' }}>
+              {!isNew ? doc.approvalLine.hq2Status : ''}
+            </td>
+          </tr>
+          <tr>
+            <th className={styles.bgGray}>참 조</th>
+            <td colSpan={6} className={styles.textLeft}></td>
+          </tr>
+          <tr>
+            <th className={styles.bgGray}>기안자</th>
+            <td colSpan={2}>{doc.drafter}</td>
+            <th className={styles.bgGray}>기안현장</th>
+            <td colSpan={3} className={styles.textLeft}>{doc.siteName}</td>
+          </tr>
+          <tr>
+            <th className={styles.bgGray}>제 목</th>
+            <td colSpan={6} className={styles.textLeft}>
+              <input 
+                type="text" 
+                value={doc.title} 
+                onChange={e => setDoc({...doc, title: e.target.value})}
+                placeholder="제목을 입력하세요"
+                disabled={!canEditGrid}
+                style={{ width: '100%', border: 'none', outline: 'none', fontSize: '14px', backgroundColor: 'transparent' }}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <div className={styles.gridSection}>
         <div className={styles.gridActions}>

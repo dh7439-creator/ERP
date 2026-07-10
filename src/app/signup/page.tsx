@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './signup.module.css';
-import { getSites } from '@/lib/auth';
+import { getSites, saveUser, UserRole } from '@/lib/auth';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -14,8 +14,29 @@ export default function SignupPage() {
     setSites(getSites());
   }, []);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string; // Save password
+    const name = formData.get('name') as string;
+    const rank = formData.get('rank') as string;
+    const site = formData.get('sites') as string;
+    const role = formData.get('role') as UserRole;
+    
+    const newUser = {
+      id: Math.random().toString(36).substr(2, 9),
+      email,
+      password,
+      name,
+      rank,
+      role,
+      sites: site ? [site] : []
+    };
+    
+    saveUser(newUser);
+
     alert('회원가입이 성공적으로 완료되었습니다! 로그인 페이지로 이동합니다.');
     router.push('/login');
   };
@@ -61,6 +82,19 @@ export default function SignupPage() {
               placeholder="이름을 입력하세요"
               required 
             />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label className="label" htmlFor="rank">직급</label>
+            <select id="rank" name="rank" className="input-field" defaultValue="">
+              <option value="" disabled>직급을 선택해주세요</option>
+              <option value="사원">사원</option>
+              <option value="주임">주임</option>
+              <option value="대리">대리</option>
+              <option value="과장">과장</option>
+              <option value="차장">차장</option>
+              <option value="부장">부장</option>
+            </select>
           </div>
 
           <div className={styles.inputGroup}>
