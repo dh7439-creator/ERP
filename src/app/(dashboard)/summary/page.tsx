@@ -40,12 +40,10 @@ export default function SummaryPage() {
     setSaveMessage('');
   }, [monthKey]);
 
-  const handlePrevMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      setCurrentDate(new Date(`${e.target.value}-01T00:00:00`));
+    }
   };
 
   const handleInputChange = (siteName: string, value: string) => {
@@ -99,9 +97,12 @@ export default function SummaryPage() {
       </div>
 
       <div className={styles.filterSection}>
-        <button className={styles.monthBtn} onClick={handlePrevMonth}>◀ 이전달</button>
-        <span className={styles.currentMonth}>{year}년 {month}월</span>
-        <button className={styles.monthBtn} onClick={handleNextMonth}>다음달 ▶</button>
+        <input 
+          type="month" 
+          className={styles.monthPicker} 
+          value={monthKey}
+          onChange={handleMonthChange}
+        />
       </div>
 
       <div className={styles.tableWrapper}>
@@ -138,6 +139,7 @@ export default function SummaryPage() {
                         <input 
                           type="text" 
                           className={styles.numInput}
+                          style={{ width: '80px', textAlign: 'center', border: '1px solid #10B981', backgroundColor: '#ECFDF5', padding: '4px', borderRadius: '4px' }}
                           value={inputs[row.siteName] ?? ''}
                           onChange={(e) => handleInputChange(row.siteName, e.target.value)}
                           placeholder="0.0"

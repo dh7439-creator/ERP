@@ -11,21 +11,7 @@ export interface SummaryRow extends SiteData {
   ratio: number; // 변경공수 비율 (%)
 }
 
-// 전자결재 연동 가상 데이터 (월별로 고정된 더미)
-const MOCK_APPROVAL_DATA: Record<string, SiteData[]> = {
-  '2026-07': [
-    { siteName: '신반포 현대 ENG', originalManhours: 150.0, changedManhours: 171.5, count: 6 },
-    { siteName: '아산탕정', originalManhours: 120.0, changedManhours: 135.0, count: 4 },
-  ],
-  '2026-08': [
-    { siteName: '신반포 현대 ENG', originalManhours: 160.0, changedManhours: 170.0, count: 5 },
-    { siteName: '아산탕정', originalManhours: 130.0, changedManhours: 130.0, count: 2 },
-    { siteName: '평택 고덕 현장', originalManhours: 200.0, changedManhours: 250.0, count: 8 },
-  ],
-  '2026-09': [
-    { siteName: '신반포 현대 ENG', originalManhours: 140.0, changedManhours: 160.0, count: 4 },
-  ]
-};
+import { getDocuments } from './approval';
 
 // 월 출력공수 데이터 저장 (LocalStorage 모의)
 // 브라우저 환경에서만 동작하므로 안전하게 접근
@@ -51,8 +37,35 @@ export function saveMonthlyManhours(month: string, data: Record<string, number>)
 }
 
 export function getSummaryData(month: string): SummaryRow[] {
-  // 1. 해당 월의 전자결재 연동 데이터 가져오기
-  const approvalData = MOCK_APPROVAL_DATA[month] || [];
+  // 1. 해당 월의 실제 전자결재 데이터 가져오기 (결재완료, 수정완료만)
+  const allDocs = getDocuments();
+  const monthDocs = allDocs.filter(doc => {
+    const isCompleted = doc.status === '결재완료' || doc.status === '수정완료';
+    const docDate = doc.completeDate || doc.draftDate;
+    return isCompleted && docDate.startsWith(month);
+  });
+
+  const siteMap: Record<string, SiteData> = {};
+  
+  monthDocs.forEach(doc => {
+    if (!siteMap[doc.siteName]) {
+      siteMap[doc.siteName] = {
+        siteName: doc.siteName,
+        originalManhours: 0,
+        changedManhours: 0,
+        count: 0
+      };
+    }
+    
+    siteMap[doc.siteName].count += 1;
+    
+    doc.rows.forEach(row => {
+      siteMap[doc.siteName].originalManhours += (Number(row.originalA) || 0);
+      siteMap[doc.siteName].changedManhours += (Number(row.changedB) || 0);
+    });
+  });
+
+  const approvalData = Object.values(siteMap);
   
   // 2. 관리자가 입력/저장한 월 출력공수 데이터 가져오기
   const monthlyManhoursData = getMonthlyManhours(month);
