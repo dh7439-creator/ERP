@@ -9,6 +9,7 @@ import { getSites, saveUser, UserRole } from '@/lib/auth';
 export default function SignupPage() {
   const router = useRouter();
   const [sites, setSites] = useState<string[]>([]);
+  const [selectedRole, setSelectedRole] = useState<UserRole>('현장 담당자');
 
   useEffect(() => {
     setSites(getSites());
@@ -97,26 +98,40 @@ export default function SignupPage() {
             </select>
           </div>
 
-          <div className={styles.inputGroup}>
-            <label className="label" htmlFor="site-select">현장명</label>
-            <select id="site-select" name="sites" className="input-field" defaultValue="" required>
-              <option value="" disabled>현장을 선택해주세요</option>
-              {sites.map(site => (
-                <option key={site} value={site}>{site}</option>
-              ))}
-            </select>
-            {sites.length === 0 && <span className={styles.emptySites}>등록된 현장이 없습니다.</span>}
-          </div>
+          {selectedRole === '현장 담당자' && (
+            <div className={styles.inputGroup}>
+              <label className="label" htmlFor="site-select">현장명</label>
+              <select id="site-select" name="sites" className="input-field" defaultValue="" required>
+                <option value="" disabled>현장을 선택해주세요</option>
+                {sites.map(site => (
+                  <option key={site} value={site}>{site}</option>
+                ))}
+              </select>
+              {sites.length === 0 && <span className={styles.emptySites}>등록된 현장이 없습니다.</span>}
+            </div>
+          )}
 
           <div className={styles.inputGroup}>
             <label className="label">권한 선택</label>
             <div className={styles.roleOptions}>
               <label className={styles.roleLabel}>
-                <input type="radio" name="role" value="현장 담당자" defaultChecked />
+                <input 
+                  type="radio" 
+                  name="role" 
+                  value="현장 담당자" 
+                  checked={selectedRole === '현장 담당자'}
+                  onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                />
                 <span>현장 담당자</span>
               </label>
               <label className={styles.roleLabel}>
-                <input type="radio" name="role" value="본사 담당자" />
+                <input 
+                  type="radio" 
+                  name="role" 
+                  value="본사 담당자" 
+                  checked={selectedRole === '본사 담당자'}
+                  onChange={(e) => setSelectedRole(e.target.value as UserRole)}
+                />
                 <span>본사 담당자</span>
               </label>
             </div>

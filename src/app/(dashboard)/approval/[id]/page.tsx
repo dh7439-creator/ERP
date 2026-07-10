@@ -46,7 +46,7 @@ export default function ApprovalDetailPage() {
     setUser(currentUser);
     
     const allUsers = getUsers();
-    setHqUsers(allUsers.filter(u => u.role === '본사 담당자'));
+    setHqUsers(allUsers.filter(u => u.role === '본사 담당자' || u.role === '통합관리자'));
 
     if (isNew && currentUser) {
       setDoc(prev => ({
@@ -169,7 +169,7 @@ export default function ApprovalDetailPage() {
                   style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
                 >
                   <option value="">선택</option>
-                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}{u.rank ? ` (${u.rank})` : ''}</option>)}
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
                 </select>
               ) : (
                 doc.approvalLine.hq1 || '미지정'
@@ -183,7 +183,7 @@ export default function ApprovalDetailPage() {
                   style={{ width: '100%', padding: '4px', textAlign: 'center', border: 'none', background: 'transparent' }}
                 >
                   <option value="">선택</option>
-                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}{u.rank ? ` (${u.rank})` : ''}</option>)}
+                  {hqUsers.map(u => <option key={u.id} value={u.name}>{u.name}</option>)}
                 </select>
               ) : (
                 doc.approvalLine.hq2 || '미지정'
