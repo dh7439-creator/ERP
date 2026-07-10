@@ -251,6 +251,12 @@ export default function Home() {
           >
             {viewMode === 'main' ? '미인식자 대시보드' : '메인 표로 돌아가기'}
           </button>
+          <button 
+            onClick={() => window.print()}
+            className={styles.btnSecondary}
+          >
+            출력
+          </button>
           {isAdmin && (
             <label className="btn-primary" style={{ padding: '8px 24px', width: 'auto', display: 'inline-block', margin: 0 }}>
               엑셀 업로드
@@ -414,22 +420,23 @@ export default function Home() {
                       <th colSpan={2} className={date.getDay() === 0 ? styles.textRed : date.getDay() === 6 ? styles.textBlue : ''}>
                         {formatDate(date)}
                       </th>
-                      <th style={{ width: '25px', background: '#E5E7EB' }}>메모</th>
+                      <th className={styles.printHide} style={{ width: '25px', background: '#E5E7EB' }}>메모</th>
                     </Fragment>
                   )
                 })}
-                <th style={{ width: '35px', background: '#E5E7EB' }}>합계</th>
+                <th style={{ width: '55px', background: '#E5E7EB' }}>합계</th>
                 <th style={{ width: '35px', background: '#E5E7EB' }}>항목</th>
                 <th style={{ width: '35px', background: '#E5E7EB' }}>비율</th>
               </tr>
             </thead>
-            <tbody>
               {sites.length === 0 ? (
-                <tr>
+                <tbody>
+                  <tr>
                   <td colSpan={3 + (weekDates.length * 3) + 3} className={styles.emptyState}>
                     우측 상단의 버튼을 눌러 엑셀 파일을 업로드해주세요.
                   </td>
                 </tr>
+                </tbody>
               ) : (
                 sites.map((site, sIdx) => {
                   let totalDaily = 0;
@@ -449,7 +456,7 @@ export default function Home() {
                   const rateOutVsIn = totalClockIn > 0 ? ((totalClockOut / totalClockIn) * 100).toFixed(0) : 0;
 
                   return (
-                    <Fragment key={sIdx}>
+                    <tbody key={sIdx} className={styles.siteGroup}>
                       <tr>
                         <td rowSpan={3} style={{ background: '#F9FAFB', fontWeight: 600, color: '#6B7280' }}>{sIdx + 1}</td>
                         <td className={styles.nowrap} rowSpan={3} style={{ fontWeight: 700, textAlign: 'left' }}>{site.name}</td>
@@ -467,18 +474,21 @@ export default function Home() {
                             <Fragment key={dIdx}>
                               <td className={`${mismatch ? `${styles.mismatchTop} ${styles.mismatchLeft}` : ''} ${styles.nowrap}`} style={{ borderBottom: '1px dotted #E5E7EB', color: '#6B7280', fontSize: '11px', padding: '4px' }}>일보</td>
                               <td className={mismatch ? `${styles.mismatchTop} ${styles.mismatchRight}` : ''} style={{ borderBottom: '1px dotted #E5E7EB', padding: '4px' }}>
-                                <input 
-                                  id={`input-daily-${sIdx}-${dateKey}`}
-                                  type="number" 
-                                  disabled={!isAdmin}
-                                  value={dayData.dailyReport || ''}
-                                  onChange={(e) => handleDailyReportChange(sIdx, dateKey, e.target.value)}
-                                  onKeyDown={(e) => handleKeyDown(e, sIdx, dateKey)}
-                                  className={styles.numInput}
-                                  placeholder="0"
-                                />
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}>
+                                  <input 
+                                    id={`input-daily-${sIdx}-${dateKey}`}
+                                    type="number" 
+                                    disabled={!isAdmin}
+                                    value={dayData.dailyReport || ''}
+                                    onChange={(e) => handleDailyReportChange(sIdx, dateKey, e.target.value)}
+                                    onKeyDown={(e) => handleKeyDown(e, sIdx, dateKey)}
+                                    className={styles.numInput}
+                                    placeholder="0"
+                                  />
+                                  <span style={{ fontSize: '11px', color: '#6B7280' }}>명</span>
+                                </div>
                               </td>
-                              <td style={{ borderBottom: '1px dotted #E5E7EB' }}>
+                              <td className={styles.printHide} style={{ borderBottom: '1px dotted #E5E7EB' }}>
                                 <button 
                                   onClick={() => openMemo(sIdx, dateKey, 'daily')}
                                   className={`${styles.memoBtn} ${hasMemoDaily ? styles.hasMemo : styles.noMemo}`}
@@ -490,7 +500,7 @@ export default function Home() {
                           );
                         })}
 
-                        <td style={{ borderBottom: '1px dotted #E5E7EB', fontWeight: 700 }}>{totalDaily}</td>
+                        <td style={{ borderBottom: '1px dotted #E5E7EB', fontWeight: 700 }}>{totalDaily}명</td>
                         <td className={styles.nowrap} style={{ borderBottom: '1px dotted #E5E7EB', color: '#6B7280', fontSize: '11px', textAlign: 'left', padding: '4px' }}>출근율</td>
                         <td style={{ borderBottom: '1px dotted #E5E7EB', fontWeight: 700 }}>{rateIn}%</td>
                       </tr>
@@ -509,9 +519,9 @@ export default function Home() {
                             <Fragment key={dIdx}>
                               <td className={`${mismatch ? styles.mismatchLeft : ''} ${styles.nowrap}`} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none', color: '#6B7280', fontSize: '11px', padding: '4px' }}>출근</td>
                               <td className={`${mismatch ? styles.mismatchRight : ''} ${styles.textBlue}`} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none', padding: '4px' }}>
-                                {dayData.clockIn || 0}
+                                {dayData.clockIn || 0}명
                               </td>
-                              <td style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none' }}>
+                              <td className={styles.printHide} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none' }}>
                                 <button 
                                   onClick={() => openMemo(sIdx, dateKey, 'clockIn')}
                                   className={`${styles.memoBtn} ${hasMemoClockIn ? styles.hasMemo : styles.noMemo}`}
@@ -522,7 +532,7 @@ export default function Home() {
                             </Fragment>
                           );
                         })}
-                        <td className={styles.textBlue} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none' }}>{totalClockIn}</td>
+                        <td className={styles.textBlue} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none' }}>{totalClockIn}명</td>
                         <td className={styles.nowrap} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none', color: '#6B7280', fontSize: '11px', textAlign: 'left', padding: '4px' }}>퇴근율</td>
                         <td className={styles.textBlue} style={{ borderBottom: '1px dotted #E5E7EB', borderTop: 'none' }}>{rateOut}%</td>
                       </tr>
@@ -540,21 +550,20 @@ export default function Home() {
                             <Fragment key={dIdx}>
                               <td className={`${mismatch ? `${styles.mismatchBottom} ${styles.mismatchLeft}` : ''} ${styles.nowrap}`} style={{ borderTop: 'none', color: '#6B7280', fontSize: '11px', padding: '4px' }}>퇴근</td>
                               <td className={`${mismatch ? `${styles.mismatchBottom} ${styles.mismatchRight}` : ''} ${styles.textOrange}`} style={{ borderTop: 'none', padding: '4px' }}>
-                                {dayData.clockOut || 0}
+                                {dayData.clockOut || 0}명
                               </td>
-                              <td style={{ borderTop: 'none' }}></td>
+                              <td className={styles.printHide} style={{ borderTop: 'none' }}></td>
                             </Fragment>
                           );
                         })}
-                        <td className={styles.textOrange} style={{ borderTop: 'none' }}>{totalClockOut}</td>
+                        <td className={styles.textOrange} style={{ borderTop: 'none' }}>{totalClockOut}명</td>
                         <td className={styles.nowrap} style={{ borderTop: 'none', color: '#6B7280', fontSize: '11px', textAlign: 'left', padding: '4px' }}>출/퇴율</td>
                         <td className={styles.textOrange} style={{ borderTop: 'none' }}>{rateOutVsIn}%</td>
                       </tr>
-                    </Fragment>
+                    </tbody>
                   );
                 })
               )}
-            </tbody>
           </table>
         </div>
       )}

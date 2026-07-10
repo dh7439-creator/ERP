@@ -56,9 +56,54 @@ export default function ApprovalDetailPage() {
       }));
     } else if (!isNew) {
       const existing = getDocuments().find(d => d.id === docId);
-      if (existing) setDoc(existing);
+      if (existing) {
+        existing.rows = existing.rows.map(r => ({
+          ...r,
+          originalA: (r.originalA as any) !== '' && r.originalA != null ? Number(r.originalA).toFixed(1) as any : '',
+          changedB: (r.changedB as any) !== '' && r.changedB != null ? Number(r.changedB).toFixed(1) as any : ''
+        }));
+        setDoc(existing);
+      }
     }
   }, [isNew, docId]);
+
+  const formatTimeInput = (val: string) => {
+    let v = val.replace(/[^0-9]/g, '');
+    if (v.length > 2) {
+      v = v.slice(0, 2) + ':' + v.slice(2, 4);
+    }
+    return v;
+  };
+
+  const handleTimeBlur = (index: number, field: 'checkIn' | 'checkOut', val: string) => {
+    if (!val) {
+      handleRowChange(index, field, '');
+      return;
+    }
+    let v = val.replace(/[^0-9]/g, '');
+    if (v.length === 4) {
+      v = v.slice(0, 2) + ':' + v.slice(2, 4);
+    } else if (v.length > 0 && v.length < 4) {
+      alert('시간은 4자리(예: 0900)로 입력해주세요.');
+      handleRowChange(index, field, '');
+      return;
+    }
+    
+    if (v.length === 5) { // HH:MM
+      const [h, m] = v.split(':');
+      if (parseInt(h, 10) > 23) {
+        alert('시간은 00에서 23 사이여야 합니다.');
+        handleRowChange(index, field, '');
+        return;
+      }
+      if (parseInt(m, 10) > 59) {
+        alert('분은 00에서 59 사이여야 합니다.');
+        handleRowChange(index, field, '');
+        return;
+      }
+      handleRowChange(index, field, v);
+    }
+  };
 
   const handleRowChange = (index: number, field: keyof ApprovalRow, value: any) => {
     const newRows = [...doc.rows];
@@ -102,6 +147,14 @@ export default function ApprovalDetailPage() {
     if (newStatus === '결재완료' || newStatus === '수정완료') {
       updated.completeDate = new Date().toISOString().split('T')[0];
     }
+    
+    // Add time to draftDate when submitting for approval
+    if (newStatus === '결재중' && doc.status === '임시저장') {
+      const now = new Date();
+      const formatted = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      updated.draftDate = formatted;
+    }
+    
     saveDocument(updated);
     
     let msg = '저장되었습니다.';
@@ -151,7 +204,7 @@ export default function ApprovalDetailPage() {
             </td>
             <td colSpan={2} className={styles.docMainTitle} style={{ width: '30%', textAlign: 'center' }}>업 무 연 락</td>
             <th className={styles.bgGray} style={{ width: '90px' }}>기안일</th>
-            <td style={{ width: '120px' }}>{doc.draftDate}</td>
+            <td style={{ width: '120px' }}>{doc.draftDate.split(' ')[0]}</td>
           </tr>
           <tr>
             <th className={styles.bgGray} rowSpan={3}>결<br/><br/>재</th>
@@ -233,18 +286,18 @@ export default function ApprovalDetailPage() {
           )}
         </div>
         
-        <table className={styles.table}>
+        <table className={`${styles.table} ${styles.detailTable}`}>
           <thead>
             <tr>
-              <th>날짜</th>
-              <th>팀명</th>
-              <th>이름</th>
-              <th>당초출력(A)</th>
-              <th>변경출력(B)</th>
-              <th>대비(B-A)</th>
-              <th>변경사유</th>
-              {showTimeInputs && <th>출근시간</th>}
-              {showTimeInputs && <th>퇴근시간</th>}
+              <th style={{ width: '10%' }}>날짜</th>
+              <th style={{ width: '15%' }}>팀명</th>
+              <th style={{ width: '10%' }}>이름</th>
+              <th style={{ width: '7%' }}>당초출력(A)</th>
+              <th style={{ width: '7%' }}>변경출력(B)</th>
+              <th style={{ width: '7%' }}>대비(B-A)</th>
+              <th style={{ width: showTimeInputs ? '26%' : '44%' }}>변경사유</th>
+              {showTimeInputs && <th style={{ width: '9%' }}>출근시간</th>}
+              {showTimeInputs && <th style={{ width: '9%' }}>퇴근시간</th>}
             </tr>
           </thead>
           <tbody>
@@ -253,14 +306,14 @@ export default function ApprovalDetailPage() {
                 <td><input type="date" className={styles.gridInput} value={row.date} onChange={e => handleRowChange(idx, 'date', e.target.value)} disabled={!canEditGrid} /></td>
                 <td><input type="text" className={styles.gridInput} value={row.team} onChange={e => handleRowChange(idx, 'team', e.target.value)} disabled={!canEditGrid} /></td>
                 <td><input type="text" className={styles.gridInput} value={row.name} onChange={e => handleRowChange(idx, 'name', e.target.value)} disabled={!canEditGrid} /></td>
-                <td><input type="number" step="0.1" className={styles.gridInput} value={row.originalA} onChange={e => handleRowChange(idx, 'originalA', e.target.value)} disabled={!canEditGrid} /></td>
-                <td><input type="number" step="0.1" className={styles.gridInput} value={row.changedB} onChange={e => handleRowChange(idx, 'changedB', e.target.value)} disabled={!canEditGrid} /></td>
-                <td style={{fontWeight: 600, color: row.diff > 0 ? '#EF4444' : '#3B82F6'}}>{row.diff > 0 ? '+' : ''}{row.diff.toFixed(1)}</td>
+                <td><input type="text" inputMode="decimal" className={styles.gridInput} value={row.originalA} onChange={e => handleRowChange(idx, 'originalA', e.target.value)} onBlur={e => handleRowChange(idx, 'originalA', e.target.value !== '' ? Number(e.target.value).toFixed(1) : '')} disabled={!canEditGrid} /></td>
+                <td><input type="text" inputMode="decimal" className={styles.gridInput} value={row.changedB} onChange={e => handleRowChange(idx, 'changedB', e.target.value)} onBlur={e => handleRowChange(idx, 'changedB', e.target.value !== '' ? Number(e.target.value).toFixed(1) : '')} disabled={!canEditGrid} /></td>
+                <td style={{fontWeight: 600, color: row.diff > 0 ? '#EF4444' : '#3B82F6'}}>{row.diff > 0 ? '+' : ''}{Number(row.diff).toFixed(1)}</td>
                 <td><input type="text" className={styles.gridInput} value={row.reason} onChange={e => handleRowChange(idx, 'reason', e.target.value)} disabled={!canEditGrid} /></td>
                 {showTimeInputs && (
                   <>
-                    <td><input type="time" className={styles.gridInput} value={row.checkIn || ''} onChange={e => handleRowChange(idx, 'checkIn', e.target.value)} disabled={!(isHQ1 || isHQ2 || user?.role === '통합관리자')} /></td>
-                    <td><input type="time" className={styles.gridInput} value={row.checkOut || ''} onChange={e => handleRowChange(idx, 'checkOut', e.target.value)} disabled={!(isHQ1 || isHQ2 || user?.role === '통합관리자')} /></td>
+                    <td><input type="text" placeholder="00:00" maxLength={5} className={styles.gridInput} value={row.checkIn || ''} onChange={e => handleRowChange(idx, 'checkIn', formatTimeInput(e.target.value))} onBlur={e => handleTimeBlur(idx, 'checkIn', e.target.value)} disabled={!(isHQ1 || isHQ2 || user?.role === '통합관리자')} /></td>
+                    <td><input type="text" placeholder="00:00" maxLength={5} className={styles.gridInput} value={row.checkOut || ''} onChange={e => handleRowChange(idx, 'checkOut', formatTimeInput(e.target.value))} onBlur={e => handleTimeBlur(idx, 'checkOut', e.target.value)} disabled={!(isHQ1 || isHQ2 || user?.role === '통합관리자')} /></td>
                   </>
                 )}
               </tr>

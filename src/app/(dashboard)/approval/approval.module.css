@@ -60,6 +60,14 @@
   font-size: 14px;
 }
 
+.detailTable {
+  border: 2px solid #111827;
+}
+
+.detailTable th, .detailTable td {
+  border: 1px solid #111827;
+}
+
 .table th {
   background-color: #F3F4F6;
   color: #374151;
@@ -207,8 +215,13 @@
 }
 
 @media print {
+  @page {
+    size: portrait;
+    margin: 0;
+  }
+  
   .container {
-    padding: 0 !important;
+    padding: 15mm !important;
     box-shadow: none !important;
   }
   
@@ -217,6 +230,20 @@
     display: none !important;
   }
   
+  .approvalHeaderTable {
+    margin-bottom: 16px !important;
+  }
+
+  .gridSection {
+    margin-bottom: 0 !important;
+  }
+
+  .approvalHeaderTable th, .approvalHeaderTable td,
+  .table th, .table td {
+    padding: 6px 4px !important;
+    font-size: 11px !important;
+  }
+
   .gridInput,
   .approvalHeaderTable input,
   .approvalHeaderTable select {
@@ -225,6 +252,22 @@
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     background: transparent !important;
+    padding: 2px !important;
+    font-size: 11px !important;
+  }
+
+  .gridInput[type="time"] {
+    text-align: center !important;
+  }
+
+  .gridInput[type="time"]::-webkit-datetime-edit {
+    padding: 0 !important;
+  }
+
+  .gridInput[type="time"]::-webkit-clear-button,
+  .gridInput[type="time"]::-webkit-inner-spin-button,
+  .gridInput[type="time"]::-webkit-calendar-picker-indicator {
+    display: none !important;
   }
   
   body {

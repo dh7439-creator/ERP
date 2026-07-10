@@ -345,3 +345,34 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+  .container {
+    padding: 15mm !important;
+    background: white !important;
+  }
+  .actionGroup, .navButton, .printHide {
+    display: none !important;
+  }
+  .table th, .table td {
+    padding: 4px !important;
+    font-size: 11px !important;
+  }
+  .numInput {
+    padding: 0 !important;
+    font-size: 11px !important;
+    border: none !important;
+    background: transparent !important;
+  }
+  .mismatchTop, .mismatchBottom, .mismatchLeft, .mismatchRight {
+    border-color: #000 !important;
+  }
+  .siteGroup {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

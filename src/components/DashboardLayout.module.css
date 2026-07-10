@@ -134,3 +134,18 @@
   overflow-y: auto;
   flex: 1;
 }
+
+@media print {
+  .sidebar, .topbar {
+    display: none !important;
+  }
+
+  .layout, .content, .mainArea {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+  }
+}
