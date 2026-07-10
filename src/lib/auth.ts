@@ -51,7 +51,16 @@ export function saveSite(site: string) {
 export function getUsers(): User[] {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('bolim_users');
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const users: User[] = JSON.parse(stored);
+      // 기존 저장된 통합관리자 계정에 비밀번호가 없는 경우 패치
+      const admin = users.find(u => u.email === 'dahye@bolimcon.co.kr');
+      if (admin && !admin.password) {
+        admin.password = '031166';
+        localStorage.setItem('bolim_users', JSON.stringify(users));
+      }
+      return users;
+    }
     
     // 초기 통합관리자 계정 세팅
     localStorage.setItem('bolim_users', JSON.stringify(INITIAL_USERS));
