@@ -50,14 +50,27 @@ export default function ApprovalListPage() {
       <div className={styles.filterSection}>
         <div className={styles.filterGroup}>
           <label className={styles.filterLabel}>상태</label>
-          <select className={styles.filterSelect} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            <option value="전체">전체</option>
-            <option value="결재중">결재중</option>
-            <option value="결재완료">결재완료</option>
-            <option value="수정완료">수정완료</option>
-            <option value="임시저장">임시저장</option>
-            <option value="반송">반송</option>
-          </select>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {['전체', '결재중', '결재완료', '수정완료', '반송'].map(status => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  border: statusFilter === status ? '1px solid #3B82F6' : '1px solid #D1D5DB',
+                  backgroundColor: statusFilter === status ? '#EFF6FF' : '#FFFFFF',
+                  color: statusFilter === status ? '#1D4ED8' : '#374151',
+                  fontSize: '14px',
+                  fontWeight: statusFilter === status ? 600 : 400,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
         </div>
         
         <div className={styles.filterGroup}>
