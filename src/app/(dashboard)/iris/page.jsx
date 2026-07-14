@@ -46,9 +46,22 @@ export default function Home() {
   const [user, setUser] = useState(null);
   useEffect(() => {
     setUser(getCurrentUser());
+    const saved = localStorage.getItem('irisRecords');
+    if (saved) {
+      try {
+        setSites(JSON.parse(saved));
+      } catch(e) {}
+    }
   }, []);
   
   const isAdmin = user?.role === '통합관리자';
+  const isHQAdmin = user?.role === '본사 담당자';
+  const isSiteManager = user?.role === '현장 담당자';
+
+  const saveData = () => {
+    localStorage.setItem('irisRecords', JSON.stringify(sites));
+    alert('저장되었습니다.');
+  };
 
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -253,6 +266,9 @@ export default function Home() {
           {viewMode === 'main' ? '홍채관리 (출력 인원)' : '미인식자 대시보드'}
         </h2>
         <div className={styles.actionGroup}>
+          <button onClick={saveData} className={styles.btnSecondary} style={{ marginRight: '8px' }}>
+            저장
+          </button>
           <button 
             onClick={() => setViewMode(v => v === 'main' ? 'unrecognized' : 'main')}
             className={styles.btnSecondary}
@@ -339,6 +355,8 @@ export default function Home() {
           <div>
             {(() => {
               const filteredSites = sites.map((site, originalSiteIdx) => {
+                if (isSiteManager && user?.sites && !user.sites.includes(site.name)) return null;
+
                 let filteredUnrec = activeUnrecDate === 'ALL' 
                   ? site.unrecognized || [] 
                   : (site.unrecognized || []).filter(u => u.date === activeUnrecDate);
@@ -367,7 +385,7 @@ export default function Home() {
                             <th style={{ width: '100px' }}>발생 일자</th>
                             <th style={{ width: '250px' }}>이름</th>
                             <th className={styles.printHide} style={{ width: '100px' }}>확인 상태</th>
-                            <th>가공 및 사유 작성</th>
+                            <th>사유 작성</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -381,10 +399,10 @@ export default function Home() {
                                   {unrec.name}
                                 </td>
                                 <td className={styles.printHide}>
-                                  <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: isAdmin ? 'pointer' : 'default' }}>
+                                  <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (isAdmin || isHQAdmin) ? 'pointer' : 'default' }}>
                                     <input 
                                       type="checkbox" 
-                                      disabled={!isAdmin}
+                                      disabled={!(isAdmin || isHQAdmin)}
                                       checked={unrec.isResolved || false}
                                       onChange={(e) => handleUnrecognizedChange(originalSiteIdx, unrecIdx, 'isResolved', e.target.checked)}
                                       style={{ marginRight: '8px', transform: 'scale(1.2)' }}
@@ -398,8 +416,8 @@ export default function Home() {
                                   <input 
                                     type="text" 
                                     className="input-field"
-                                    disabled={!isAdmin}
-                                    placeholder={isAdmin ? "사유를 입력해주세요" : "작성된 사유가 없습니다"}
+                                    disabled={!(isAdmin || isSiteManager)}
+                                    placeholder={(isAdmin || isSiteManager) ? "사유를 입력해주세요" : "작성된 사유가 없습니다"}
                                     value={unrec.memo || ''}
                                     onChange={(e) => handleUnrecognizedChange(originalSiteIdx, unrecIdx, 'memo', e.target.value)}
                                     style={{ padding: '8px', fontSize: '13px' }}
@@ -458,7 +476,11 @@ export default function Home() {
                 </tr>
                 </tbody>
               ) : (
-                sites.map((site, sIdx) => {
+                (() => {
+                  let visibleCount = 0;
+                  const renderedSites = sites.map((site, sIdx) => {
+                    if (isSiteManager && user?.sites && !user.sites.includes(site.name)) return null;
+
                   let totalDaily = 0;
                   let totalClockIn = 0;
                   let totalClockOut = 0;
@@ -471,6 +493,10 @@ export default function Home() {
                     totalClockOut += dayData.clockOut;
                   });
 
+                  if (totalDaily === 0 && totalClockIn === 0 && totalClockOut === 0) return null;
+
+                  visibleCount++;
+
                   const rateIn = totalDaily > 0 ? ((totalClockIn / totalDaily) * 100).toFixed(0) : 0;
                   const rateOut = totalDaily > 0 ? ((totalClockOut / totalDaily) * 100).toFixed(0) : 0;
                   const rateOutVsIn = totalClockIn > 0 ? ((totalClockOut / totalClockIn) * 100).toFixed(0) : 0;
@@ -478,7 +504,7 @@ export default function Home() {
                   return (
                     <tbody key={sIdx} className={styles.siteGroup}>
                       <tr>
-                        <td rowSpan={3} style={{ background: '#F9FAFB', fontWeight: 600, color: '#6B7280' }}>{sIdx + 1}</td>
+                        <td rowSpan={3} style={{ background: '#F9FAFB', fontWeight: 600, color: '#6B7280' }}>{visibleCount}</td>
                         <td className={styles.nowrap} rowSpan={3} style={{ fontWeight: 700, textAlign: 'left' }}>{site.name}</td>
                         
                         {weekDates.map((date, dIdx) => {
@@ -582,7 +608,22 @@ export default function Home() {
                       </tr>
                     </tbody>
                   );
-                })
+                });
+
+                const hasVisibleSites = renderedSites.some(r => r !== null);
+                if (!hasVisibleSites) {
+                  return (
+                    <tbody>
+                      <tr>
+                        <td colSpan={3 + (weekDates.length * 3) + 3} className={styles.emptyState}>
+                          선택하신 주간에 해당하는 데이터가 없습니다.
+                        </td>
+                      </tr>
+                    </tbody>
+                  );
+                }
+                return renderedSites;
+              })()
               )}
           </table>
         </div>
