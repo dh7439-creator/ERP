@@ -2,14 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import styles from './admin.module.css';
-import { getUsers, saveUser, User, UserRole } from '@/lib/auth';
+import { getUsers, saveUser, deleteUser, User, UserRole } from '@/lib/auth';
 
 export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [activeTab, setActiveTab] = useState<'accounts' | 'sites' | 'roles'>('accounts');
 
-  useEffect(() => {
+  const refreshUsers = () => {
     setUsers(getUsers());
+  };
+
+  useEffect(() => {
+    refreshUsers();
   }, []);
 
   return (
@@ -36,7 +40,7 @@ export default function AdminPage() {
       </div>
 
       <div>
-        {activeTab === 'accounts' && <AccountManagement users={users} />}
+        {activeTab === 'accounts' && <AccountManagement users={users} onRefresh={refreshUsers} />}
         {activeTab === 'sites' && <SiteManagement users={users} />}
         {activeTab === 'roles' && <RoleManagement users={users} />}
       </div>
@@ -44,11 +48,42 @@ export default function AdminPage() {
   );
 }
 
-function AccountManagement({ users }: { users: User[] }) {
+function AccountManagement({ users, onRefresh }: { users: User[], onRefresh: () => void }) {
   const [subTab, setSubTab] = useState<'field' | 'hq'>('field');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editEmail, setEditEmail] = useState('');
+  const [editSites, setEditSites] = useState('');
 
   const fieldUsers = users.filter(u => u.role === '현장 담당자');
   const hqUsers = users.filter(u => u.role === '본사 담당자');
+
+  const handleDelete = (id: string) => {
+    if (confirm('정말로 이 담당자를 삭제하시겠습니까?')) {
+      deleteUser(id);
+      onRefresh();
+    }
+  };
+
+  const startEdit = (u: User) => {
+    setEditingId(u.id);
+    setEditEmail(u.email);
+    setEditSites((u.sites || []).join(', '));
+  };
+
+  const handleSaveEdit = (u: User) => {
+    const updated = {
+      ...u,
+      email: editEmail,
+      sites: editSites.split(',').map(s => s.trim()).filter(Boolean)
+    };
+    saveUser(updated);
+    setEditingId(null);
+    onRefresh();
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+  };
 
   return (
     <div className={styles.card}>
@@ -88,14 +123,48 @@ function AccountManagement({ users }: { users: User[] }) {
           ) : (
             (subTab === 'field' ? fieldUsers : hqUsers).map(u => (
               <tr key={u.id}>
-                <td>{u.name}</td>
-                <td>{u.email}</td>
-                <td><span className={styles.roleBadge} data-role={u.role}>{u.role}</span></td>
-                <td>{u.sites?.length || 0}개</td>
-                <td>
-                  <button className={styles.btnText}>수정</button>
-                  <button className={styles.btnTextDanger}>삭제</button>
-                </td>
+                {editingId === u.id ? (
+                  <>
+                    <td>{u.name}</td>
+                    <td>
+                      <input 
+                        type="email" 
+                        value={editEmail} 
+                        onChange={e => setEditEmail(e.target.value)} 
+                        style={{width: '100%', padding: '6px', border: '1px solid #D1D5DB', borderRadius: '4px'}} 
+                      />
+                    </td>
+                    <td><span className={styles.roleBadge} data-role={u.role}>{u.role}</span></td>
+                    <td>
+                      {u.role === '현장 담당자' ? (
+                        <input 
+                          type="text" 
+                          value={editSites} 
+                          onChange={e => setEditSites(e.target.value)} 
+                          placeholder="현장1, 현장2 (쉼표로 구분)" 
+                          style={{width: '100%', padding: '6px', border: '1px solid #D1D5DB', borderRadius: '4px'}} 
+                        />
+                      ) : (
+                        '전체'
+                      )}
+                    </td>
+                    <td>
+                      <button className={styles.btnText} onClick={() => handleSaveEdit(u)} style={{color: '#10B981'}}>저장</button>
+                      <button className={styles.btnText} onClick={cancelEdit}>취소</button>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td>{u.name}</td>
+                    <td>{u.email}</td>
+                    <td><span className={styles.roleBadge} data-role={u.role}>{u.role}</span></td>
+                    <td>{u.role === '현장 담당자' ? (u.sites?.length || 0) + '개' : '전체'}</td>
+                    <td>
+                      <button className={styles.btnText} onClick={() => startEdit(u)}>수정</button>
+                      <button className={styles.btnTextDanger} onClick={() => handleDelete(u.id)}>삭제</button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))
           )}

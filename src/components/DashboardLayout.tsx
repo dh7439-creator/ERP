@@ -79,7 +79,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {pathname === '/admin' && '관리자 설정'}
           </h1>
           <div className={styles.userProfile}>
-            {user.name} ({user.role})
+            {user.name} {user.rank || ''} ({user.role})
           </div>
         </header>
 

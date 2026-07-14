@@ -17,6 +17,7 @@ const INITIAL_USERS: User[] = [
     email: 'dahye@bolimcon.co.kr',
     password: '031166',
     name: '임다혜',
+    rank: '대리',
     role: '통합관리자',
   }
 ];
@@ -53,10 +54,11 @@ export function getUsers(): User[] {
     const stored = localStorage.getItem('bolim_users');
     if (stored) {
       const users: User[] = JSON.parse(stored);
-      // 기존 저장된 통합관리자 계정에 비밀번호가 없는 경우 패치
+      // 기존 저장된 통합관리자 계정에 비밀번호나 직급이 없는 경우 패치
       const admin = users.find(u => u.email === 'dahye@bolimcon.co.kr');
-      if (admin && !admin.password) {
-        admin.password = '031166';
+      if (admin && (!admin.password || !admin.rank)) {
+        admin.password = admin.password || '031166';
+        admin.rank = '대리';
         localStorage.setItem('bolim_users', JSON.stringify(users));
       }
       return users;
@@ -72,8 +74,21 @@ export function getUsers(): User[] {
 export function saveUser(user: User) {
   if (typeof window !== 'undefined') {
     const users = getUsers();
-    users.push(user);
+    const index = users.findIndex(u => u.id === user.id);
+    if (index > -1) {
+      users[index] = user;
+    } else {
+      users.push(user);
+    }
     localStorage.setItem('bolim_users', JSON.stringify(users));
+  }
+}
+
+export function deleteUser(id: string) {
+  if (typeof window !== 'undefined') {
+    const users = getUsers();
+    const newUsers = users.filter(u => u.id !== id);
+    localStorage.setItem('bolim_users', JSON.stringify(newUsers));
   }
 }
 
