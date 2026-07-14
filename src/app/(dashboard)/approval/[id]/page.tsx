@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { getDocuments, saveDocument, ApprovalDocument, ApprovalRow, generateId } from '@/lib/approval';
+import { getDocuments, saveDocument, deleteDocument, ApprovalDocument, ApprovalRow, generateId } from '@/lib/approval';
 import { getCurrentUser, getUsers, User } from '@/lib/auth';
 import styles from '../approval.module.css';
 
@@ -165,6 +165,13 @@ export default function ApprovalDetailPage() {
     
     alert(msg);
     router.push('/approval');
+  };
+
+  const handleDelete = () => {
+    if (confirm('이 업무연락 문서를 정말 삭제하시겠습니까?')) {
+      deleteDocument(docId);
+      router.push('/approval');
+    }
   };
 
   // Permissions & Visibility
@@ -336,6 +343,10 @@ export default function ApprovalDetailPage() {
         <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => router.push('/approval')}>목록으로</button>
         <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px', backgroundColor: '#F3F4F6', color: '#374151', border: '1px solid #D1D5DB'}} onClick={() => window.print()}>출력</button>
         
+        {user?.role === '통합관리자' && !isNew && (
+          <button className="btn-danger" style={{width: 'auto', padding: '12px 32px', backgroundColor: '#EF4444', color: 'white', border: 'none', borderRadius: '6px', marginRight: 'auto'}} onClick={handleDelete}>삭제</button>
+        )}
+        
         {isNew || (isDrafter && (doc.status === '임시저장' || doc.status === '반송')) ? (
           <>
             <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => save('임시저장')}>임시저장</button>
@@ -358,12 +369,15 @@ export default function ApprovalDetailPage() {
         {isHQ2 && doc.status === '결재중' && doc.approvalLine.hq1Status === 'APPROVED' && doc.approvalLine.hq2Status === 'PENDING' && (
           <>
             <button className="btn-danger" style={{width: 'auto', padding: '12px 32px', backgroundColor: '#EF4444', color: 'white', border: 'none', borderRadius: '6px'}} onClick={() => save('반송')}>반송</button>
-            <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => save('수정완료')}>수정완료</button>
             <button className="btn-primary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => {
               doc.approvalLine.hq2Status = 'APPROVED';
               save('결재완료');
             }}>결재 (최종 승인)</button>
           </>
+        )}
+
+        {user?.role === '통합관리자' && doc.status === '결재완료' && (
+          <button className="btn-secondary" style={{width: 'auto', padding: '12px 32px'}} onClick={() => save('수정완료')}>수정완료</button>
         )}
       </div>
     </div>

@@ -59,3 +59,11 @@ export function saveDocument(doc: ApprovalDocument) {
 export function generateId() {
   return Math.random().toString(36).substr(2, 9);
 }
+
+export function deleteDocument(id: string) {
+  if (typeof window !== 'undefined') {
+    const docs = getDocuments();
+    const newDocs = docs.filter(d => d.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newDocs));
+  }
+}

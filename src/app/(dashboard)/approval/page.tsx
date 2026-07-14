@@ -43,7 +43,7 @@ export default function ApprovalListPage() {
       <div className={styles.headerRow}>
         <h2 className={styles.title}>전자결재 목록</h2>
         <button className="btn-primary" onClick={handleDraft} style={{ padding: '8px 24px', width: 'auto' }}>
-          [기안]
+          기안
         </button>
       </div>
 
