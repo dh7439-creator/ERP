@@ -94,15 +94,28 @@ export default function Home() {
             merged.push(targetSite);
           }
 
-          if (newSite.unrecognized) {
-            if (!targetSite.unrecognized) targetSite.unrecognized = [];
-            newSite.unrecognized.forEach(unrec => {
-              const exists = targetSite.unrecognized.find(u => u.date === unrec.date && u.name === unrec.name);
-              if (!exists) {
-                targetSite.unrecognized.push(unrec);
+          if (!targetSite.unrecognized) targetSite.unrecognized = [];
+          
+          // Get all dates present in the newly uploaded excel for this site
+          const uploadedDates = new Set(newSite.records.map(r => r.date));
+          
+          uploadedDates.forEach(date => {
+            const otherDatesUnrec = targetSite.unrecognized.filter(u => u.date !== date);
+            const existingThisDate = targetSite.unrecognized.filter(u => u.date === date);
+            const newThisDate = (newSite.unrecognized || []).filter(u => u.date === date);
+            
+            const mergedThisDate = [];
+            newThisDate.forEach(newU => {
+              const existingU = existingThisDate.find(eu => eu.name === newU.name);
+              if (existingU) {
+                mergedThisDate.push(existingU);
+              } else {
+                mergedThisDate.push(newU);
               }
             });
-          }
+            
+            targetSite.unrecognized = [...otherDatesUnrec, ...mergedThisDate];
+          });
 
           newSite.records.forEach(record => {
             const key = record.date;
@@ -186,6 +199,10 @@ export default function Home() {
       }
       site.records = records;
       newSites[siteIdx] = site;
+      
+      // 모달 내 '저장' 버튼 클릭 시 로컬 스토리지에도 즉시 반영
+      localStorage.setItem('irisRecords', JSON.stringify(newSites));
+      
       return newSites;
     });
     closeMemo();
@@ -263,7 +280,7 @@ export default function Home() {
       `}</style>
       <div className={styles.headerRow}>
         <h2 className={styles.title}>
-          {viewMode === 'main' ? '홍채관리 (출력 인원)' : '미인식자 대시보드'}
+          {viewMode === 'main' ? '일보작성 점검표' : '미인식자 대시보드'}
         </h2>
         <div className={styles.actionGroup}>
           <button onClick={saveData} className={styles.btnSecondary} style={{ marginRight: '8px' }}>

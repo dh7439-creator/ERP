@@ -31,7 +31,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className={styles.layout}>
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h2 className={styles.brand}>BOLIM ERP</h2>
+          <h2 className={styles.brand} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <img src="/logo_transparent.png" alt="CI" style={{ height: '1.2em', width: 'auto', objectFit: 'contain' }} />
+            BOLIM ERP
+          </h2>
           <span className={styles.badge} data-role={user.role}>{user.role}</span>
         </div>
         <nav className={styles.nav}>

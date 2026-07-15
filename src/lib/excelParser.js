@@ -43,6 +43,12 @@ export const parseExcelData = (file) => {
             return k.includes('팀명') || k.includes('소속') || k.includes('업체');
           });
 
+          // 고유 식별자 (전화번호, 사번, 생년월일 등 - 동명이인 구별용)
+          const idKey = Object.keys(row).find(key => {
+            const k = key.replace(/\s+/g, '');
+            return k.includes('전화') || k.includes('연락처') || k.includes('휴대폰') || k.includes('핸드폰') || k.includes('번호') || k.includes('사번') || k.includes('아이디') || k.includes('ID') || k.includes('생년월일');
+          });
+
           // 공수가 비어있거나 정확히 '0'이면 무조건 통계 및 미인식자에서 완전 제외 (가장 먼저 컷)
           // 단, '0.1' 등 소수점이 있는 경우는 통과
           const gongsuValue = gongsuKey && row[gongsuKey] !== undefined ? String(row[gongsuKey]).trim() : '';
@@ -105,41 +111,71 @@ export const parseExcelData = (file) => {
             if (!siteDataMap.has(siteName)) {
               siteDataMap.set(siteName, {
                 name: siteName,
-                records: [], // { date: 'YYYY-MM-DD', clockIn: 1, clockOut: 1 } 배열
-                unrecognized: [] // { date: 'YYYY-MM-DD', name: '홍길동' } 
+                workersByDate: new Map() // dateStr -> Map(workerName -> { team, hasIn, hasOut })
               });
             }
 
             const currentSite = siteDataMap.get(siteName);
-            
-            // 미인식자 처리 (인증회수 1)
-            if (isUnrecognized) {
-              const workerName = nameKey && row[nameKey] ? String(row[nameKey]).trim() : '이름없음';
-              const teamName = teamKey && row[teamKey] ? String(row[teamKey]).trim() : '';
-              currentSite.unrecognized.push({
-                date: dateStr,
-                name: workerName,
-                team: teamName
-              });
+            if (!currentSite.workersByDate.has(dateStr)) {
+              currentSite.workersByDate.set(dateStr, new Map());
             }
+            const dateWorkers = currentSite.workersByDate.get(dateStr);
             
-            // 해당 날짜의 레코드가 있는지 확인
-            let dayRecord = currentSite.records.find(r => r.date === dateStr);
-            if (!dayRecord) {
-              dayRecord = { date: dateStr, clockIn: 0, clockOut: 0 };
-              currentSite.records.push(dayRecord);
-            }
+            const workerName = nameKey && row[nameKey] ? String(row[nameKey]).trim() : '이름없음';
+            const teamName = teamKey && row[teamKey] ? String(row[teamKey]).trim() : '';
+            const workerIdStr = idKey && row[idKey] ? String(row[idKey]).trim() : '';
+            
+            // 동명이인 구분을 위해 고유 식별자나 소속을 키에 포함
+            const uniqueWorkerKey = workerIdStr ? `${workerName}_${workerIdStr}` : (teamName ? `${teamName}_${workerName}` : workerName);
 
-            if (hasClockIn) {
-              dayRecord.clockIn += 1;
+            if (!dateWorkers.has(uniqueWorkerKey)) {
+              dateWorkers.set(uniqueWorkerKey, { name: workerName, team: teamName, hasIn: false, hasOut: false });
             }
-            if (hasClockOut) {
-              dayRecord.clockOut += 1;
-            }
+            
+            const workerState = dateWorkers.get(uniqueWorkerKey);
+            if (hasClockIn) workerState.hasIn = true;
+            if (hasClockOut) workerState.hasOut = true;
           }
         });
 
-        resolve(Array.from(siteDataMap.values()));
+        // Convert the aggregated worker data back to records and unrecognized arrays
+        const result = Array.from(siteDataMap.values()).map(site => {
+          const records = [];
+          const unrecognized = [];
+          
+          site.workersByDate.forEach((workersMap, dateStr) => {
+            let clockInCount = 0;
+            let clockOutCount = 0;
+            
+            workersMap.forEach((state, uniqueKey) => {
+              if (state.hasIn) clockInCount++;
+              if (state.hasOut) {
+                clockOutCount++;
+              } else if (state.hasIn) {
+                // clocked in but no clock out -> unrecognized
+                unrecognized.push({
+                  date: dateStr,
+                  name: state.name,
+                  team: state.team
+                });
+              }
+            });
+            
+            records.push({
+              date: dateStr,
+              clockIn: clockInCount,
+              clockOut: clockOutCount
+            });
+          });
+          
+          return {
+            name: site.name,
+            records,
+            unrecognized
+          };
+        });
+
+        resolve(result);
       } catch (err) {
         reject(err);
       }
